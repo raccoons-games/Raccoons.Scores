@@ -1,7 +1,7 @@
 {
   "name": "com.raccoons.scores",
   "displayName": "Raccoons Scores",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Solution for storing scores and coins.\nRequires:\n- Raccoons Maths\n- Raccoons Storage",
   "unity": "2018.1",
   "author": "Raccoons Games",
