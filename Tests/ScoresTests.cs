@@ -33,12 +33,18 @@ namespace Raccoons.Scores.Tests
             IStorage storage = new PlayerPrefsStorage("Raccoons/Scores/Tests");
             IScoreStorage scoreStorage = new DefaultScoreStorage("TestScore", storage);
             IScoreBank scoreBank = bankCreator(scoreStorage);
+            scoreBank.OnScoreChanged += ScoreBank_OnScoreChanged;
             scoreBank.SetScore(10);
             Assert.IsTrue(scoreBank.CanSpend(9));
             Assert.IsFalse(scoreBank.CanSpend(11));
             scoreBank.Acquire(1);
             Assert.DoesNotThrow(() => scoreBank.Spend(11));
             Assert.Throws(typeof(CannotSpendScoreException), () => scoreBank.Spend(1));
+        }
+
+        private void ScoreBank_OnScoreChanged(object sender, ScoreChangeData e)
+        {
+            Debug.Log("ScoreChanged - "+e.NewScore);
         }
 
         [UnityTest]

@@ -19,19 +19,35 @@ namespace Raccoons.Scores.Storages
         public event EventHandler<ScoreChangeData> OnScoreChanged;
         public string ScoreKey { get; }
         public IStorageChannel StorageChannel { get; }
+        public virtual float FallbackValue => 0;
+
         public float GetScore()
         {
-            return StorageChannel.GetFloat(ScoreKey);
+            if (StorageChannel.Exists(ScoreKey))
+            {
+                return StorageChannel.GetFloat(ScoreKey);
+            }
+            else
+            {
+                return FallbackValue;
+            }
         }
 
-        public Task<float> GetScoreAsync(CancellationToken cancellationToken = default)
+        public async Task<float> GetScoreAsync(CancellationToken cancellationToken = default)
         {
-            return StorageChannel.GetFloatAsync(ScoreKey, cancellationToken);
+            if (await StorageChannel.ExistsAsync(ScoreKey))
+            {
+                return await StorageChannel.GetFloatAsync(ScoreKey, cancellationToken);
+            }
+            else
+            {
+                return FallbackValue;
+            }
         }
 
         public ScoreChangeData SetScore(float newScore)
         {
-            float oldScore = StorageChannel.GetFloat(ScoreKey);
+            float oldScore = GetScore();
             StorageChannel.SetFloat(ScoreKey, newScore);
             return NotifyScoreChanged(newScore, oldScore);
         }
